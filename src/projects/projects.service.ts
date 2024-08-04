@@ -13,7 +13,8 @@ export class ProjectsService {
   ) {}
 
   async create(createProjectDto: CreateProjectDto): Promise<Project> {
-    return this.projectsRepository.save(createProjectDto);
+    const project = await this.projectsRepository.create(createProjectDto);
+    return this.projectsRepository.save(project);
   }
 
   findAll(): Promise<Project[]> {
