@@ -1,40 +1,20 @@
+import { BaseEntity } from 'src/common/entities/base.entity';
+import { KanbanColumn } from 'src/kanban-columns/entities/kanban-column.entity';
 import { Project } from 'src/projects/entities/project.entity';
+import { TaskAssignment } from 'src/task-assignments/entities/task-assignment.entity';
 import { User } from 'src/users/entities/user.entity';
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 
 @Entity()
-export class Task {
-  @PrimaryGeneratedColumn()
-  id: number;
-
+export class Task extends BaseEntity {
   @Column()
   title: string;
 
   @Column({ nullable: true })
   description: string;
 
-  @Column({ default: 'Pending' })
-  status: string;
-
   @Column({ name: 'due_date', type: 'timestamp', nullable: true })
   dueDate: Date;
-
-  @Column({ default: 'Medium' })
-  priority: string;
-
-  @CreateDateColumn({ name: 'created_at' })
-  createdAt: Date;
-
-  @UpdateDateColumn({ name: 'updated_at' })
-  updatedAt: Date;
 
   @ManyToOne(() => User, (user) => user.tasks)
   @JoinColumn({ name: 'user_id' })
@@ -43,4 +23,11 @@ export class Task {
   @ManyToOne(() => Project, (project) => project.tasks, { nullable: true })
   @JoinColumn({ name: 'project_id' })
   project: Project;
+
+  @ManyToOne(() => KanbanColumn, (kanbanColumn) => kanbanColumn.tasks)
+  @JoinColumn({ name: 'kanban_column_id' })
+  kanbanColumn: KanbanColumn;
+
+  @OneToMany(() => TaskAssignment, (taskAssignment) => taskAssignment.task)
+  taskAssignments: TaskAssignment[];
 }

@@ -1,32 +1,17 @@
+import { Entity, Column, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
+import { BaseEntity } from 'src/common/entities/base.entity';
 import { Task } from 'src/tasks/entities/task.entity';
+import { KanbanColumn } from 'src/kanban-columns/entities/kanban-column.entity';
 import { User } from 'src/users/entities/user.entity';
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  OneToMany,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { ProjectMember } from 'src/project-members/entities/project-member.entity';
 
 @Entity()
-export class Project {
-  @PrimaryGeneratedColumn()
-  id: number;
-
+export class Project extends BaseEntity {
   @Column()
   name: string;
 
   @Column({ nullable: true })
   description: string;
-
-  @CreateDateColumn({ name: 'created_at' })
-  createdAt: Date;
-
-  @UpdateDateColumn({ name: 'updated_at' })
-  updatedAt: Date;
 
   @ManyToOne(() => User, (user) => user.projects)
   @JoinColumn({ name: 'user_id' })
@@ -34,4 +19,10 @@ export class Project {
 
   @OneToMany(() => Task, (task) => task.project)
   tasks: Task[];
+
+  @OneToMany(() => ProjectMember, (projectMember) => projectMember.project)
+  projectMembers: ProjectMember[];
+
+  @OneToMany(() => KanbanColumn, (kanbanColumn) => kanbanColumn.project)
+  kanbanColumns: KanbanColumn[];
 }
